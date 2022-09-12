@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vipsirp-api-service
+spec:
+  type: ExternalName
+  externalName: vips-api-deployment-dev-1-test.c220ad-dev.svc.cluster.local
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ride-vips-adapter-rev-proxy
+  name: ride-vips-adapter-rev-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ride-vips-adapter-rev-proxy
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: ride-vips-adapter-rev-proxy
+    spec:
+      containers:
+      - image: image-registry.openshift-image-registry.svc:5000/be5301-dev/ride-vips-adapter-nginx-rev-proxy-image:1
+        name: ride-vips-adapter-rev-proxy
+        env:
+          - name: NGINX_CONF_PATH
+            value: /tmp/nginx.conf
+        volumeMounts:
+        - name: nginxvol
+          mountPath: "/tmp"
+        ports:
+        - containerPort: 80
+        - containerPort: 8080
+        - containerPort: 8082
+        - containerPort: 5000
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      volumes:
+      - name: nginxvol
+        configMap:
+          name: vipsgatewaynginxconfig
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: ride-vips-nginx-proxy-cluster-ip
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8083
+      name: tcp1
+  internalTrafficPolicy: Cluster
+  type: ClusterIP
+  ipFamilyPolicy: SingleStack
+  sessionAffinity: None
+  selector:
+    app: ride-vips-adapter-rev-proxy
+
+---
+
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: ride-vips-gateway-adapter
+spec:
+  to:
+    kind: Service
+    name: ride-vips-nginx-proxy-cluster-ip
+    weight: 100
+  port:
+    targetPort: 8083
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
