@@ -2,7 +2,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: vipsirp-api-service
-  namespace: be5301-dev
 spec:
   type: ExternalName
   externalName: digitalforms-viirp-api-svc.c220ad-dev.svc.cluster.local
@@ -14,7 +13,6 @@ metadata:
   labels:
     app: ride-vips-adapter-rev-proxy
   name: ride-vips-adapter-rev-proxy
-  namespace: be5301-dev
 spec:
   replicas: 1
   selector:
@@ -29,13 +27,6 @@ spec:
       containers:
       - image: image-registry.openshift-image-registry.svc:5000/be5301-dev/ride-vips-adapter-nginx-rev-proxy-image:1
         name: ride-vips-adapter-rev-proxy
-        resources:
-          limits:
-            cpu: 200m
-            memory: 200Mi
-          requests:
-            cpu: 100m
-            memory: 200Mi
         env:
           - name: NGINX_CONF_PATH
             value: /tmp/nginx.conf
@@ -60,7 +51,6 @@ kind: Service
 apiVersion: v1
 metadata:
   name: ride-vips-nginx-proxy-cluster-ip
-  namespace: be5301-dev
 spec:
   ports:
     - protocol: TCP
@@ -80,7 +70,6 @@ kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
   name: ride-vips-gateway-adapter
-  namespace: be5301-dev
 spec:
   to:
     kind: Service
@@ -92,24 +81,3 @@ spec:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
   wildcardPolicy: None
-
----
-
-apiVersion: autoscaling/v1
-kind: HorizontalPodAutoscaler
-metadata:
-  creationTimestamp: null
-  namespace: be5301-dev
-  labels:
-    app: ride-vips-adapter-rev-proxy
-  name: ride-vips-adapter-rev-proxy-autoscale
-spec:
-  maxReplicas: 2
-  minReplicas: 1
-  scaleTargetRef:
-    apiVersion: v1
-    kind: Deployment
-    name: ride-vips-adapter-rev-proxy
-  targetCPUUtilizationPercentage: 85
-
----
