@@ -5,7 +5,7 @@ metadata:
   namespace: be5301-test
 spec:
   type: ExternalName
-  externalName: digitalforms-viirp-api-svc.c220ad-dev.svc.cluster.local
+  externalName: digitalforms-viirp-api-svc.c220ad-test.svc.cluster.local
 ---
 
 apiVersion: apps/v1
@@ -27,7 +27,7 @@ spec:
         app: ride-vips-adapter-rev-proxy
     spec:
       containers:
-      - image: image-registry.openshift-image-registry.svc:5000/be5301-dev/ride-vips-adapter-nginx-rev-proxy-image:1
+      - image: image-registry.openshift-image-registry.svc:5000/be5301-test/ride-vips-adapter-nginx-rev-proxy-image:1
         name: ride-vips-adapter-rev-proxy
         resources:
           limits:
