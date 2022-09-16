@@ -27,6 +27,54 @@ spec:
         app: ride-vips-adapter-rev-proxy
     spec:
       containers:
+      - image: image-registry.openshift-image-registry.svc:5000/be5301-dev/busybox:latest-stable
+        name: accesslogs
+        volumeMounts:
+        - name: logvol
+          mountPath: "/tmp"
+        args:
+        - /bin/sh
+        - -c
+        - "tail -f /tmp/access.log"
+        livenessProbe:
+          exec:
+            command:
+            - cat
+            - /tmp/access.log
+          initialDelaySeconds: 50
+          periodSeconds: 5
+          failureThreshold: 10
+          successThreshold: 1
+          timeoutSeconds: 10
+        startupProbe:
+          exec:
+            command:
+            - cat
+            - /tmp/access.log
+          initialDelaySeconds: 50
+          periodSeconds: 5
+          failureThreshold: 10
+          successThreshold: 1
+          timeoutSeconds: 10
+      - image: image-registry.openshift-image-registry.svc:5000/be5301-dev/busybox:latest-stable
+        name: errorlogs
+        volumeMounts:
+        - name: logvol
+          mountPath: "/tmp"
+        args:
+        - /bin/sh
+        - -c
+        - "tail -f /tmp/error.log"
+        livenessProbe:
+          exec:
+            command:
+            - cat
+            - /tmp/access.log
+          initialDelaySeconds: 50
+          periodSeconds: 5
+          failureThreshold: 10
+          successThreshold: 1
+          timeoutSeconds: 10
       - image: image-registry.openshift-image-registry.svc:5000/be5301-dev/ride-vips-adapter-nginx-rev-proxy-image:1
         name: ride-vips-adapter-rev-proxy
         resources:
@@ -42,6 +90,8 @@ spec:
         volumeMounts:
         - name: nginxvol
           mountPath: "/tmp"
+        - name: logvol
+          mountPath: /var/opt/rh/rh-nginx120/log/nginx
         ports:
         - containerPort: 80
         - containerPort: 8080
@@ -78,6 +128,8 @@ spec:
       - name: nginxvol
         configMap:
           name: vipsgatewaynginxconfig
+      - name: logvol
+        emptyDir: {}
 
 ---
 
