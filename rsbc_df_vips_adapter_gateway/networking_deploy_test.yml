@@ -27,7 +27,55 @@ spec:
         app: ride-vips-adapter-rev-proxy
     spec:
       containers:
-      - image: image-registry.openshift-image-registry.svc:5000/be5301-test/ride-vips-adapter-nginx-rev-proxy-image:1
+      - image: image-registry.openshift-image-registry.svc:5000/be5301-test/busybox:latest-stable
+        name: accesslogs
+        volumeMounts:
+        - name: logvol
+          mountPath: "/tmp"
+        args:
+        - /bin/sh
+        - -c
+        - "tail -f /tmp/access.log"
+        livenessProbe:
+          exec:
+            command:
+            - cat
+            - /tmp/access.log
+          initialDelaySeconds: 50
+          periodSeconds: 5
+          failureThreshold: 10
+          successThreshold: 1
+          timeoutSeconds: 10
+        startupProbe:
+          exec:
+            command:
+            - cat
+            - /tmp/access.log
+          initialDelaySeconds: 80
+          periodSeconds: 5
+          failureThreshold: 10
+          successThreshold: 1
+          timeoutSeconds: 10
+      - image: image-registry.openshift-image-registry.svc:5000/be5301-test/busybox:latest-stable
+        name: errorlogs
+        volumeMounts:
+        - name: logvol
+          mountPath: "/tmp"
+        args:
+        - /bin/sh
+        - -c
+        - "tail -f /tmp/error.log"
+        livenessProbe:
+          exec:
+            command:
+            - cat
+            - /tmp/access.log
+          initialDelaySeconds: 50
+          periodSeconds: 5
+          failureThreshold: 10
+          successThreshold: 1
+          timeoutSeconds: 10
+      - image: image-registry.openshift-image-registry.svc:5000/be5301-dev/ride-vips-adapter-nginx-rev-proxy-image:1
         name: ride-vips-adapter-rev-proxy
         resources:
           limits:
@@ -42,17 +90,46 @@ spec:
         volumeMounts:
         - name: nginxvol
           mountPath: "/tmp"
+        - name: logvol
+          mountPath: /var/opt/rh/rh-nginx120/log/nginx
         ports:
         - containerPort: 80
         - containerPort: 8080
         - containerPort: 8082
         - containerPort: 5000
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          periodSeconds: 10
+          failureThreshold: 5
+          successThreshold: 1
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 35
+          periodSeconds: 15
+          failureThreshold: 5
+          successThreshold: 1
+          timeoutSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /
+            port: 8080
+          failureThreshold: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 10
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       volumes:
       - name: nginxvol
         configMap:
           name: vipsgatewaynginxconfig
+      - name: logvol
+        emptyDir: {}
 
 ---
 
