@@ -1,0 +1,23 @@
+name: CI Checks for build
+
+on:
+  push:
+    branches-ignore:   
+      - 'release**'
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    env:
+      build_config_name: "ride-vips-adapter-nginx-proxy-build"
+      image_stream_name: " ride-vips-adapter-nginx-rev-proxy-image"
+      image_tags: "dev"
+
+    steps:
+      - name: Authenticate and set context
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL_SILVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_SA_PIPELINE_TOKEN_SILVER }}
+          namespace: "${{ secrets.OPENSHIFT_LICENSE_PLATE_SILVER }}-tools"
+
