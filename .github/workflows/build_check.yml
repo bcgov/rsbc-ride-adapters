@@ -12,6 +12,7 @@ jobs:
       build_config_name: "ride-vips-adapter-nginx-proxy-build"
       image_stream_name: " ride-vips-adapter-nginx-rev-proxy-image"
       image_tags: "dev"
+      base_image_tag: "1"
 
     steps:
       - name: Checkout repository
@@ -25,7 +26,9 @@ jobs:
       - name: Docker login to repo
         run: |
           docker login -u docker -p $(oc whoami -t) ${{ secrets.OPENSHIFT_IMAGE_REPO }}
-          ls -a
+      - name: Pull Base Image
+        run: |
+          docker image pull ${{ secrets.NGINX_BASE_IMAGE_TOOLS }}:${{env.base_image_tag}}
         
 
 
