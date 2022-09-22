@@ -34,6 +34,10 @@ jobs:
         run: |
           cd rsbc_df_vips_adapter_gateway
           docker build -t vips_adapter_build_test:1 .
+      - name: Test Connectivity
+        run: |
+          docker run -itd --name testadapter -p 80:8080 nginx-custom:1
+          curl localhost:80
         
 
 
