@@ -24,6 +24,7 @@ jobs:
           namespace: "${{ secrets.OPENSHIFT_LICENSE_PLATE_SILVER }}-tools"
       - name: Docker login to repo
         run: |
+          docker login -u docker -p $(oc whoami -t) ${{ secrets.OPENSHIFT_IMAGE_REPO }}
           docker image pull image-registry.apps.silver.devops.gov.bc.ca/be5301-tools/rsbc-ride-kafka-evteventproducer
         
 
