@@ -29,6 +29,8 @@ jobs:
       - name: Pull Base Image
         run: |
           docker image pull ${{ secrets.NGINX_BASE_IMAGE_TOOLS }}:${{env.base_image_tag}}
+          docker image tag ${{ secrets.NGINX_BASE_IMAGE_TOOLS }}:${{env.base_image_tag}} nginx-custom:1
+          docker image ls
         
 
 
