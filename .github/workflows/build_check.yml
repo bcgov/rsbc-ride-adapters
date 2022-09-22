@@ -6,7 +6,7 @@ on:
       - 'release**'
 
 jobs:
-  build-image:
+  test-build-image:
     runs-on: ubuntu-latest
     env:
       build_config_name: "ride-vips-adapter-nginx-proxy-build"
@@ -14,12 +14,18 @@ jobs:
       image_tags: "dev"
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
       - name: Authenticate and set context
         uses: redhat-actions/oc-login@v1
         with:
           openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL_SILVER }}
           openshift_token: ${{ secrets.OPENSHIFT_SA_PIPELINE_TOKEN_SILVER }}
           namespace: "${{ secrets.OPENSHIFT_LICENSE_PLATE_SILVER }}-tools"
+      - name: Docker login to repo
+        run: |
+          docker image pull image-registry.apps.silver.devops.gov.bc.ca/be5301-tools/rsbc-ride-kafka-evteventproducer
+        
 
-          
+
 
