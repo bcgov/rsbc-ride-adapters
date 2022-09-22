@@ -30,7 +30,10 @@ jobs:
         run: |
           docker image pull ${{ secrets.NGINX_BASE_IMAGE_TOOLS }}:${{env.base_image_tag}}
           docker image tag ${{ secrets.NGINX_BASE_IMAGE_TOOLS }}:${{env.base_image_tag}} nginx-custom:1
-          docker image ls
+      - name: Build Image
+        run: |
+          cd rsbc_df_vips_adapter_gateway
+          docker build -t vips_adapter_build_test:1 .
         
 
 
