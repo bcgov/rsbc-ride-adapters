@@ -1,0 +1,72 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata: {}
+objects:
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations: null
+    creationTimestamp: null
+    labels:
+      shared: "true"
+    name: nginx-120-image-latest  ${BASE_IMAGE_NAME}
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/imported-from: registry.redhat.io/rhscl/nginx-120-rhel7:1-47.1661531726
+      from:
+        kind: DockerImage
+        name: registry.redhat.io/rhscl/nginx-120-rhel7:1-47.1661531726
+      generation: null
+      importPolicy: {}
+      name: ${BASE_IMAGE_TAG}
+      referencePolicy:
+        type: "Local"
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      description: Keeps track of changes in the application image
+    creationTimestamp: null
+    labels:
+      shared: "true"
+    name: ${OUTPUT_IMAGE_STREAM_NAME}
+  spec:
+    lookupPolicy:
+      local: false
+    tags: []
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: ${BUILD_CONFIG_NAME}
+    labels:
+      name: ${BUILD_CONFIG_NAME}
+  spec:
+    # triggers:
+    #   - type: ConfigChange
+    source:
+      dockerfile: |
+        FROM nginx-120
+        CMD ["nginx", "-c", "/tmp/nginx.conf",  "-g", "daemon off;"]
+    strategy:
+      dockerStrategy:
+        dockerfilePath: Dockerfile
+        from:
+          kind: ImageStreamTag       
+          name: ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
+      type: Docker
+    output:
+      to:
+        kind: ImageStreamTag
+        name: ${OUTPUT_IMAGE_STREAM_NAME}:${OUTPUT_IMAGE_STREAM_TAG}
+
+parameters:
+  - name: OUTPUT_IMAGE_STREAM_NAME
+  - name: BUILD_CONFIG_NAME
+  - name: BASE_IMAGE_TAG
+  - name: OUTPUT_IMAGE_STREAM_TAG
+  - name: BASE_IMAGE_NAME
