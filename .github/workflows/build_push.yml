@@ -3,15 +3,14 @@ name: Build and Push Image
 on:
   push:
     branches-ignore:   
-      - 'release**'
+      - 'release**'      
+      - 'feature/ride294_buildpush'
 
 jobs:
   build-image:
     runs-on: ubuntu-latest
     env:
       build_config_name: "ride-vips-adapter-nginx-proxy-build-v2"
-      image_stream_name: " ride-vips-adapter-nginx-rev-proxy-image"
-      image_tags: "dev"
       base_image_tag: "1"
 
 
