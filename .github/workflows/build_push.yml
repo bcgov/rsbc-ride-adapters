@@ -27,4 +27,4 @@ jobs:
       - name: Apply Build Yaml
         run: |
           cd rsbc_df_vips_adapter_gateway/github_actions_yamls
-          oc process -f revproxy_build_template.yml --param-file revproxy_build_params.yml --param OUTPUT_IMAGE_STREAM_TAG=build-${env.GITHUB_SHA} | oc apply -f -
+          oc process -f revproxy_build_template.yml --param-file revproxy_build_params.yml --param OUTPUT_IMAGE_STREAM_TAG=build-$GITHUB_SHA | oc apply -f -
