@@ -9,7 +9,8 @@ objects:
     creationTimestamp: null
     labels:
       shared: "true"
-    name: nginx-120-image-latest  ${BASE_IMAGE_NAME}
+    name: ${BASE_IMAGE_NAME}
+    namespace: ${NAMESPACE}
   spec:
     lookupPolicy:
       local: false
@@ -35,6 +36,7 @@ objects:
     labels:
       shared: "true"
     name: ${OUTPUT_IMAGE_STREAM_NAME}
+    namespace: ${NAMESPACE}
   spec:
     lookupPolicy:
       local: false
@@ -45,6 +47,7 @@ objects:
     name: ${BUILD_CONFIG_NAME}
     labels:
       name: ${BUILD_CONFIG_NAME}
+    namespace: ${NAMESPACE}
   spec:
     # triggers:
     #   - type: ConfigChange
@@ -58,11 +61,13 @@ objects:
         from:
           kind: ImageStreamTag       
           name: ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
+          namespace: ${NAMESPACE}
       type: Docker
     output:
       to:
         kind: ImageStreamTag
         name: ${OUTPUT_IMAGE_STREAM_NAME}:${OUTPUT_IMAGE_STREAM_TAG}
+        namespace: ${NAMESPACE}
 
 parameters:
   - name: OUTPUT_IMAGE_STREAM_NAME
@@ -70,3 +75,4 @@ parameters:
   - name: BASE_IMAGE_TAG
   - name: OUTPUT_IMAGE_STREAM_TAG
   - name: BASE_IMAGE_NAME
+  - name: NAMESPACE

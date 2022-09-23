@@ -3,3 +3,4 @@ BASE_IMAGE_TAG: "1"
 OUTPUT_IMAGE_STREAM_TAG: "2.0"
 BUILD_CONFIG_NAME: ride-vips-adapter-nginx-proxy-build-v2
 BASE_IMAGE_NAME: nginx-120-image-latest 
+NAMESPACE: be5301-tools
