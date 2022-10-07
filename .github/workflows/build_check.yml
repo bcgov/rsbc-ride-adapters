@@ -4,7 +4,8 @@ on:
   push:
     branches-ignore:   
       - 'release**'
-      - 'feature/ride294_buildpush'
+      - 'main'
+      - 'master'
 
 jobs:
   test-build-image:
