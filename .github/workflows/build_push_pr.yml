@@ -6,7 +6,7 @@ on:
     branches-ignore:   
       - 'main'
       - 'master'
-      - 'release**'
+      # - 'release**'
 
 
 jobs:
