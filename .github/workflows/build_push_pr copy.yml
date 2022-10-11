@@ -37,6 +37,7 @@ jobs:
         run: |
           echo 'merge with target'
           ls .github/workflows
+          git fetch
           git branch -a
           git checkout remotes/origin/release_1_0
           git merge feature/buildpushpr
