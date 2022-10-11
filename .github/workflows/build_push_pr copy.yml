@@ -42,6 +42,7 @@ jobs:
           git fetch
           git branch -a
           git checkout release_1_0
+          git reset --hard
           git merge feature/buildpushpr --allow-unrelated-histories
           git checkout -b testprbranch
           git push -u origin testprbranch
