@@ -53,7 +53,7 @@ jobs:
         run: |
           git config --global user.email "ride_vips_actions@gov.bc.ca"
           git config --global user.name "ride_vips_actions"
-          git config --global pull.ff only
+          git config --global pull.rebase true
           echo 'merge with target'
           ls .github/workflows
           git fetch
