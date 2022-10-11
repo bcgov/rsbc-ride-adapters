@@ -33,6 +33,22 @@ jobs:
       #     openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL_SILVER }}
       #     openshift_token: ${{ secrets.OPENSHIFT_SA_PIPELINE_TOKEN_SILVER }}
       #     namespace: "${{ secrets.OPENSHIFT_LICENSE_PLATE_SILVER }}-tools"
+      # - name: Merge with target
+      #   run: |
+      #     git config --global user.email "ride_vips_actions@gov.bc.ca"
+      #     git config --global user.name "ride_vips_actions"
+      #     echo 'merge with target'
+      #     ls .github/workflows
+      #     git fetch
+      #     git branch -a
+      #     git checkout release_1_0
+      #     git reset --hard
+      #     git status
+      #     ls .github/workflows
+      #     cat .github/workflows/build_check.yml
+      #     git merge feature/buildpushpr --allow-unrelated-histories
+      #     git checkout -b testprbranch
+      #     git push -u origin testprbranch
       - name: Merge with target
         run: |
           git config --global user.email "ride_vips_actions@gov.bc.ca"
@@ -41,12 +57,10 @@ jobs:
           ls .github/workflows
           git fetch
           git branch -a
-          git checkout release_1_0
-          git reset --hard
+          git pull origin release_1_0
           git status
           ls .github/workflows
           cat .github/workflows/build_check.yml
-          git merge feature/buildpushpr --allow-unrelated-histories
           git checkout -b testprbranch
           git push -u origin testprbranch
       - name: Build PR
