@@ -39,7 +39,7 @@ jobs:
           ls .github/workflows
           git fetch
           git branch -a
-          git checkout remotes/origin/release_1_0
+          git checkout release_1_0
           git merge feature/buildpushpr
           git checkout -b testprbranch
           git push -u origin testprbranch
