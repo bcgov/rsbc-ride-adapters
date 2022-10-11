@@ -45,6 +45,7 @@ jobs:
           git reset --hard
           git status
           ls .github/workflows
+          cat .github/workflows/build_check.yml
           git merge feature/buildpushpr --allow-unrelated-histories
           git checkout -b testprbranch
           git push -u origin testprbranch
