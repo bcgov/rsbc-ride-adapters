@@ -76,7 +76,6 @@ jobs:
           git fetch
           cd rsbc-ride-adapters
           git checkout release_1_0
-          git pull
           git fetch origin
           git merge feature/buildpushpr
           git checkout -b testprbranch
