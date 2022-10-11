@@ -49,24 +49,36 @@ jobs:
       #     git merge feature/buildpushpr --allow-unrelated-histories
       #     git checkout -b testprbranch
       #     git push -u origin testprbranch
-      - name: Merge with target
+      # - name: Merge with target
+      #   run: |
+      #     git config --global user.email "ride_vips_actions@gov.bc.ca"
+      #     git config --global user.name "ride_vips_actions"
+      #     git config --global pull.rebase true
+      #     echo 'merge with target'
+      #     ls .github/workflows
+      #     git fetch
+      #     git branch -a
+      #     git checkout feature/buildpushpr
+      #     git pull
+      #     git rebase origin/release_1_0
+      #     git pull origin release_1_0
+      #     git status
+      #     ls .github/workflows
+      #     cat .github/workflows/build_check.yml
+      #     git checkout -b testprbranch
+      #     git push -u origin testprbranch
+      - name: Merge with PR branch
         run: |
-          git config --global user.email "ride_vips_actions@gov.bc.ca"
-          git config --global user.name "ride_vips_actions"
-          git config --global pull.rebase true
-          echo 'merge with target'
-          ls .github/workflows
+          git clone "https://github.com/bcgov/rsbc-ride-adapters"
           git fetch
-          git branch -a
-          git checkout feature/buildpushpr
+          cd rsbc-ride-adapters
+          git checkout release_1_0
           git pull
-          git rebase origin/release_1_0
-          git pull origin release_1_0
-          git status
-          ls .github/workflows
-          cat .github/workflows/build_check.yml
+          git merge feature/buildpushpr
           git checkout -b testprbranch
           git push -u origin testprbranch
+
+          
       - name: Build PR
         run: |
           echo 'build pr'
