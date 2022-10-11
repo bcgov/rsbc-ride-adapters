@@ -80,6 +80,7 @@ jobs:
           git checkout release_1_0   
           git merge feature/buildpushpr 
           git checkout -b testprbranch
+          git remote add testbranch
           git remote set-url testbranch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
           git push -u testbranch testprbranch
 
