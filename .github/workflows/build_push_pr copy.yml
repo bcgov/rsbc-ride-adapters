@@ -75,7 +75,7 @@ jobs:
           git checkout feature/buildpushpr
           git pull
           git fetch
-          git pull origin/release_1_0
+          git pull origin release_1_0
           git checkout -b testprbranch
           git push -u origin testprbranch
 
