@@ -73,10 +73,9 @@ jobs:
           git config --global user.email "ride_vips_actions@gov.bc.ca"
           git config --global user.name "ride_vips_actions"
           git config --global pull.rebase true
-          git fetch
           cd rsbc-ride-adapters
-          git checkout release_1_0
           git fetch origin
+          git checkout release_1_0          
           git merge feature/buildpushpr
           git checkout -b testprbranch
           git push -u origin testprbranch
