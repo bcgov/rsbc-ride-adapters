@@ -1,0 +1,43 @@
+name: Merge PR to main Branch and Deploy
+
+on:
+  pull_request:
+    types: [closed]
+    branches:   
+      - 'main'
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    env:
+      build_config_name: "ride-vips-adapter-nginx-proxy-build-v2"
+      base_image_tag: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Authenticate and set context
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL_SILVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_SA_PIPELINE_TOKEN_SILVER }}
+          namespace: "${{ secrets.OPENSHIFT_LICENSE_PLATE_SILVER }}-tools"
+      - name: Apply Build Yaml
+        run: |
+          echo 'apply build yaml'
+      - name: Start the build and push
+        run: |
+          echo 'Build and Push'
+      - name: Manual approval for deploy to PROD
+        run: |
+          echo 'manual approval for prod'
+      - name: Update deploy manifests for prod to Argocd
+        run: |
+          echo 'update deploy prod'
+      # - name: Apply Build Yaml
+      #   run: |
+      #     cd rsbc_df_vips_adapter_gateway/github_actions_yamls
+      #     oc process -f revproxy_build_template.yml --param-file revproxy_build_params.yml --param OUTPUT_IMAGE_STREAM_TAG=build-$GITHUB_SHA | oc apply -f -
+      # - name: Start the build and push
+      #   run: |
+      #     oc start-build ${{ env.build_config_name }} --follow --wait
