@@ -74,9 +74,10 @@ jobs:
           git config --global user.name "ride_vips_actions"
           git config --global pull.rebase true
           cd rsbc-ride-adapters
-          git fetch origin
-          git checkout release_1_0          
-          git merge feature/buildpushpr
+          git fetch
+          git branch -a
+          git checkout feature/buildpushpr         
+          git merge releas_1_0
           git checkout -b testprbranch
           git push -u origin testprbranch
 
