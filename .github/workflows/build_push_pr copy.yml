@@ -37,7 +37,8 @@ jobs:
         run: |
           echo 'merge with target'
           ls .github/workflows
-          git merge release_1_0
+          git checkout release_1_0
+          git merge feature/buildpushpr
           git checkout -b testprbranch
           git push -u origin testprbranch
       - name: Build PR
