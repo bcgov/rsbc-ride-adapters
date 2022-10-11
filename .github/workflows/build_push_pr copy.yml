@@ -70,6 +70,9 @@ jobs:
       - name: Merge with PR branch
         run: |
           git clone "https://github.com/bcgov/rsbc-ride-adapters"
+          git config --global user.email "ride_vips_actions@gov.bc.ca"
+          git config --global user.name "ride_vips_actions"
+          git config --global pull.rebase true
           git fetch
           cd rsbc-ride-adapters
           git checkout feature/buildpushpr
