@@ -35,6 +35,8 @@ jobs:
       #     namespace: "${{ secrets.OPENSHIFT_LICENSE_PLATE_SILVER }}-tools"
       - name: Merge with target
         run: |
+          git config --global user.email "ride_vips_actions@gov.bc.ca"
+          git config --global user.name "ride_vips_actions"
           echo 'merge with target'
           ls .github/workflows
           git fetch
