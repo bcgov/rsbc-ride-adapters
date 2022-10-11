@@ -72,10 +72,10 @@ jobs:
           git clone "https://github.com/bcgov/rsbc-ride-adapters"
           git fetch
           cd rsbc-ride-adapters
-          git checkout release_1_0
+          git checkout feature/buildpushpr
           git pull
           git fetch
-          git merge feature/buildpushpr
+          git pull release_1_0
           git checkout -b testprbranch
           git push -u origin testprbranch
 
