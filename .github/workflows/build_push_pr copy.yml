@@ -58,7 +58,8 @@ jobs:
           ls .github/workflows
           git fetch
           git branch -a
-          git checkout remotes/origin/feature/buildpushpr
+          git checkout feature/buildpushpr
+          git pull
           git pull origin release_1_0
           git status
           ls .github/workflows
