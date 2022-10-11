@@ -6,6 +6,7 @@ on:
       - 'release**'
       - 'main'
       - 'master'
+      - 'feature/buildpushpr'
 
 jobs:
   test-build-image:
