@@ -1,0 +1,42 @@
+name: CI Checks for build
+
+on:
+  push:
+    branches-ignore:   
+      - 'release**'
+      - 'main'
+      - 'master'
+
+jobs:
+  test-build-image:
+    runs-on: ubuntu-latest
+    env:
+      build_config_name: "ride-vips-adapter-nginx-proxy-build"
+      image_stream_name: " ride-vips-adapter-nginx-rev-proxy-image"
+      image_tags: "dev"
+      base_image_tag: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Authenticate and set context
+        uses: redhat-actions/oc-login@v1.1.2
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL_SILVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_SA_PIPELINE_TOKEN_SILVER }}
+          namespace: "${{ secrets.OPENSHIFT_LICENSE_PLATE_SILVER }}-tools"
+      - name: Docker login to repo
+        run: |
+          docker login -u docker -p $(oc whoami -t) ${{ secrets.OPENSHIFT_IMAGE_REPO }}
+      - name: Pull Base Image
+        run: |
+          docker image pull ${{ secrets.NGINX_BASE_IMAGE_TOOLS }}:${{env.base_image_tag}}
+          docker image tag ${{ secrets.NGINX_BASE_IMAGE_TOOLS }}:${{env.base_image_tag}} nginx-custom:1
+      - name: Test Build Image
+        run: |
+          cd rsbc_df_vips_adapter_gateway
+          docker build -t vips_adapter_build_test:1 .
+        
+
+
+
