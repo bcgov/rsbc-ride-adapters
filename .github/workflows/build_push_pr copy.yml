@@ -75,10 +75,10 @@ jobs:
           git config --global pull.rebase true
           git fetch
           cd rsbc-ride-adapters
-          git checkout feature/buildpushpr
+          git checkout release_1_0
           git pull
           git fetch
-          git pull origin release_1_0
+          git merge feature/buildpushpr
           git checkout -b testprbranch
           git push -u origin testprbranch
 
