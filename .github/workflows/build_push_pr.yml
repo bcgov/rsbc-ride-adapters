@@ -81,12 +81,12 @@ jobs:
         - name: Update Image tag for PR deploy
           uses: mikefarah/yq@v4.28.1
           with:
-            cmd: yq eval -i '.images[0].newTag = "pr-build-${{env.PR_IMAGE_STREAM_TAG}}"' 'ride_vips_adapter/overlays/pr/kustomization_yaml_sample/kustomization.yaml'
+            cmd: yq eval -i '.images[0].newTag = "pr-build-${{env.PR_IMAGE_STREAM_TAG}}"' 'ride_vips_adapter/overlays/pr/kustomization.yaml'
         - name: Update name suffix for PR deploy
           uses: mikefarah/yq@v4.28.1
           with:
-            cmd: yq eval -i '.nameSuffix = "-pr-${{env.PR_NUMBER}}"' 'ride_vips_adapter/overlays/pr/kustomization_yaml_sample/kustomization.yaml'
+            cmd: yq eval -i '.nameSuffix = "-pr-${{env.PR_NUMBER}}"' 'ride_vips_adapter/overlays/pr/kustomization.yaml'
         - name: Check Changed value
           run: |
-            cat ride_vips_adapter/overlays/pr/kustomization_yaml_sample/kustomization.yaml
+            cat ride_vips_adapter/overlays/pr/kustomization.yaml
         
