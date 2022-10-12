@@ -78,6 +78,13 @@ jobs:
           repository: bcgov-c/tenant-gitops-be5301
           ref: deployment/rsbc-ride-vips-adapter
           token: ${{ secrets.GITOPS_GITHUB_TOKEN }}
+      - name: New PR Branch
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git checkout -b pr-branch-${{env.PR_NUMBER}}
+          git push -u origin pr-branch-${{env.PR_NUMBER}}
+          git pull
       - name: Update Image tag for PR deploy
         uses: mikefarah/yq@v4.28.1
         with:
@@ -91,11 +98,7 @@ jobs:
           cat ride_vips_adapter/overlays/pr/kustomization.yaml
       - name: Push Changes
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git checkout -b pr-branch-${{env.PR_NUMBER}}
-          git pull
           git add .
-          git commit -m "updated"
+          git commit -m "updated pr image tag"
           git push -u origin pr-branch-${{env.PR_NUMBER}}
         
