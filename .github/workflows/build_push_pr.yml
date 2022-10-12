@@ -67,7 +67,7 @@ jobs:
       - name: Update Image tag for PR deploy
         uses: mikefarah/yq@v4.28.1
         with:
-          cmd: yq eval -i '.images[0].newTag = "pr-build-${{GITHUB_SHA}}"' 'rsbc_df_vips_adapter_gateway/kustomization_yaml_sample/kustomization.yml'
+          cmd: yq eval -i '.images[0].newTag = "pr-build-${{env.GITHUB_SHA}}"' 'rsbc_df_vips_adapter_gateway/kustomization_yaml_sample/kustomization.yml'
       - name: Check Changed value
         run: |
           cat rsbc_df_vips_adapter_gateway/kustomization_yaml_sample/kustomization.yml
