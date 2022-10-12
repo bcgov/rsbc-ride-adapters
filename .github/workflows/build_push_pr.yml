@@ -83,7 +83,6 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git pull
-          git 
           git checkout -B pr-branch-${{env.PR_NUMBER}}  
           git branch --set-upstream-to=origin/pr-branch-${{env.PR_NUMBER}} pr-branch-${{env.PR_NUMBER}}
           git pull        
