@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+images:
+  - name: Image_name
+    newName: name_image
+    newTag: "tag_value"
+  - name: Image_name_2
+    newName: name_image_2
+    newTag: "tag_value_2"
+namespace: "ns"
+# add a common label to kubernete resources
+commonLabels:
+  app: app
+patchesStrategicMerge:
+  # inject the mockproducer service name into mockproducer route
+  - app.yml
+resources:
+  - ../../base/
