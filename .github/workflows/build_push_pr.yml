@@ -67,4 +67,4 @@ jobs:
       - name: Update Image tag for PR deploy
         uses: mikefarah/yq@v4.28.1
         with:
-          cmd: yq -i '.patches[0].patch = "Your Value"' 'kustomization_yaml_sample/kustomization.yml'
+          cmd: yq -i '.patches[0].patch = "Your Value"' 'rsbc_df_vips_adapter_gateway/kustomization_yaml_sample/kustomization.yml'
