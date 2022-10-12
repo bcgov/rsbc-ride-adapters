@@ -2,7 +2,7 @@ name: Build and Push Image for PR
 
 on:
   pull_request:
-    types: [opened, reopened,edited]
+    types: [opened, reopened,edited,synchronize]
     branches-ignore:   
       - 'main'
       - 'master'
