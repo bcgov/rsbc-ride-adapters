@@ -72,13 +72,21 @@ jobs:
       # - name: Check Changed value
       #   run: |
       #     cat rsbc_df_vips_adapter_gateway/kustomization_yaml_sample/kustomization.yml
-        - name: Checkout repository
+        - name: Checkout Gitops repository
           uses: actions/checkout@v3
           with:
             repository: bcgov-c/tenant-gitops-be5301
             ref: deployment/rsbc-ride-vips-adapter
             token: ${{ secrets.GITOPS_GITHUB_TOKEN }}
-        - name: List Files
+        - name: Update Image tag for PR deploy
+          uses: mikefarah/yq@v4.28.1
+          with:
+            cmd: yq eval -i '.images[0].newTag = "pr-build-${{env.PR_IMAGE_STREAM_TAG}}"' 'ride_vips_adapter/overlays/pr/kustomization_yaml_sample/kustomization.yaml'
+        - name: Update name suffix for PR deploy
+          uses: mikefarah/yq@v4.28.1
+          with:
+            cmd: yq eval -i '.nameSuffix = "-pr-${{env.PR_NUMBER}}"' 'ride_vips_adapter/overlays/pr/kustomization_yaml_sample/kustomization.yaml'
+        - name: Check Changed value
           run: |
-            cd ride_vips_adapter
-            ls -a
+            cat ride_vips_adapter/overlays/pr/kustomization_yaml_sample/kustomization.yaml
+        
