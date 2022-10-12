@@ -94,6 +94,7 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git checkout -b pr-branch-${{env.PR_NUMBER}}
+          git pull
           git add .
           git commit -m "updated"
           git push -u origin pr-branch-${{env.PR_NUMBER}}
