@@ -80,4 +80,5 @@ jobs:
             token: ${{ secrets.GITOPS_GITHUB_TOKEN }}
         - name: List Files
           run: |
+            cd ride_vips_adapter
             ls -a
