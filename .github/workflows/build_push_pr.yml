@@ -63,12 +63,21 @@ jobs:
       #     git fetch
       #     git remote add testbranch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
       #     git push -d testbranch pr-${{ env.PR_NUMBER }}-branch
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Update Image tag for PR deploy
-        uses: mikefarah/yq@v4.28.1
-        with:
-          cmd: yq eval -i '.images[0].newTag = "pr-build-${{env.PR_IMAGE_STREAM_TAG}}"' 'rsbc_df_vips_adapter_gateway/kustomization_yaml_sample/kustomization.yml'
-      - name: Check Changed value
-        run: |
-          cat rsbc_df_vips_adapter_gateway/kustomization_yaml_sample/kustomization.yml
+      # - name: Checkout repository
+      #   uses: actions/checkout@v3
+      # - name: Update Image tag for PR deploy
+      #   uses: mikefarah/yq@v4.28.1
+      #   with:
+      #     cmd: yq eval -i '.images[0].newTag = "pr-build-${{env.PR_IMAGE_STREAM_TAG}}"' 'rsbc_df_vips_adapter_gateway/kustomization_yaml_sample/kustomization.yml'
+      # - name: Check Changed value
+      #   run: |
+      #     cat rsbc_df_vips_adapter_gateway/kustomization_yaml_sample/kustomization.yml
+        - name: Checkout repository
+          uses: actions/checkout@v3
+          with:
+            repository: bcgov-c/tenant-gitops-be5301
+            ref: deployment/rsbc-ride-vips-adapter
+            token: ${{ secrets.GITOPS_GITHUB_TOKEN }}
+        - name: List Files
+          run: |
+            ls -a
