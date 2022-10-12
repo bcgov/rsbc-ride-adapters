@@ -31,9 +31,9 @@ jobs:
           git checkout $GITHUB_HEAD_REF      
           git checkout $GITHUB_BASE_REF  
           git merge $GITHUB_HEAD_REF 
-          git checkout -b pr-${{ env.build_config_name }}-branch
+          git checkout -b pr-${{ env.PR_NUMBER }}-branch
           git remote add testbranch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
-          git push -u testbranch pr-${{ env.build_config_name }}-branch
+          git push -u testbranch pr-${{ env.PR_NUMBER }}-branch
 
       - name: Checkout repository
         uses: actions/checkout@v3        
