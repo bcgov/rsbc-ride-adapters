@@ -1,8 +1,8 @@
-name: Build, Push and deploy for PR
+name: Build, Push and deploy for PR-On Open new PR
 
 on:
   pull_request:
-    types: [opened, reopened,edited,synchronize]
+    types: [opened, reopened]
     branches-ignore:   
       - 'main'
       - 'master'
@@ -98,10 +98,8 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git pull
-          git checkout -B pr-branch-${{env.PR_NUMBER}}  
-          git branch --set-upstream-to=origin/pr-branch-${{env.PR_NUMBER}} pr-branch-${{env.PR_NUMBER}}
-          git pull        
-          git push -u origin pr-branch-${{env.PR_NUMBER}}
+          git checkout -b pr-branch-${{env.PR_NUMBER}}  
+          git push -u origin pr-branch-${{env.PR_NUMBER}} 
       - name: Update Image tag for PR deploy
         uses: mikefarah/yq@v4.28.1
         with:
