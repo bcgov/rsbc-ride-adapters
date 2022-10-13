@@ -6,6 +6,8 @@ on:
       - 'release**'
       - 'main'
       - 'master'
+      - 'feature/buildpushpr'
+      - 'aanb'
 
 jobs:
   test-build-image:
