@@ -36,6 +36,7 @@ jobs:
   deploy-dev:
     runs-on: ubuntu-latest
     environment: dev
+    needs: build-image
     env:
       build_config_name: "ride-vips-adapter-nginx-proxy-build-v2"
       base_image_tag: "1"
