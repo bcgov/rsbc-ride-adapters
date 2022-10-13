@@ -1,4 +1,4 @@
-name: Build and Push Image for PR
+name: Build, Push and deploy for PR
 
 on:
   pull_request:
@@ -10,7 +10,8 @@ on:
 
 
 jobs:
-  build-image:
+  merge_pr_local:
+    name: Merge PR locally and create temp branch
     runs-on: ubuntu-latest
     env:
       build_config_name: "ride-vips-adapter-nginx-proxy-build-v2"
@@ -20,7 +21,7 @@ jobs:
 
 
     steps:
-      - name: Merge with PR branch
+      - name: Merge the PR branch locally
         run: |
           git clone "https://github.com/bcgov/rsbc-ride-adapters"
           git config --global user.email "ride_vips_actions@gov.bc.ca"
@@ -36,6 +37,16 @@ jobs:
           git remote add testbranch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
           git push -u testbranch pr-${{ env.PR_NUMBER }}-branch
 
+  build_pr:
+    name: Build and Push from PR temp branch
+    runs-on: ubuntu-latest
+    env:
+      build_config_name: "ride-vips-adapter-nginx-proxy-build-v2"
+      base_image_tag: "1"
+      PR_NUMBER: ${{ github.event.number }}
+      PR_IMAGE_STREAM_TAG: pr-build-${{ github.sha}}
+
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v3        
         with:
@@ -63,15 +74,17 @@ jobs:
           git fetch
           git remote add testbranch https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
           git push -d testbranch pr-${{ env.PR_NUMBER }}-branch
-      # - name: Checkout repository
-      #   uses: actions/checkout@v3
-      # - name: Update Image tag for PR deploy
-      #   uses: mikefarah/yq@v4.28.1
-      #   with:
-      #     cmd: yq eval -i '.images[0].newTag = "pr-build-${{env.PR_IMAGE_STREAM_TAG}}"' 'rsbc_df_vips_adapter_gateway/kustomization_yaml_sample/kustomization.yml'
-      # - name: Check Changed value
-      #   run: |
-      #     cat rsbc_df_vips_adapter_gateway/kustomization_yaml_sample/kustomization.yml
+
+    
+  deploy_pr_argocd:
+    name: Push to Gitops repo for PR deployment via Argocd
+    runs-on: ubuntu-latest
+    env:
+      build_config_name: "ride-vips-adapter-nginx-proxy-build-v2"
+      base_image_tag: "1"
+      PR_NUMBER: ${{ github.event.number }}
+      PR_IMAGE_STREAM_TAG: pr-build-${{ github.sha}}
+    steps:
       - name: Checkout Gitops repository
         uses: actions/checkout@v3
         with:
@@ -101,6 +114,6 @@ jobs:
       - name: Push Changes
         run: |
           git add .
-          git commit -m "updated pr image tag"
+          git commit -m "updated pr details to yaml"
           git push -u origin pr-branch-${{env.PR_NUMBER}}
         
