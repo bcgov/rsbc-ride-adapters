@@ -40,6 +40,7 @@ jobs:
   build_pr:
     name: Build and Push from PR temp branch
     runs-on: ubuntu-latest
+    needs: merge_pr_local
     env:
       build_config_name: "ride-vips-adapter-nginx-proxy-build-v2"
       base_image_tag: "1"
@@ -79,6 +80,7 @@ jobs:
   deploy_pr_argocd:
     name: Push to Gitops repo for PR deployment via Argocd
     runs-on: ubuntu-latest
+    needs: [merge_pr_local,build_pr]
     env:
       build_config_name: "ride-vips-adapter-nginx-proxy-build-v2"
       base_image_tag: "1"
