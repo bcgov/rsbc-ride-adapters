@@ -1,10 +1,13 @@
 name: Merge PR to Release Branch
 
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:   
       - 'release**'
+  # pull_request:
+  #   types: [closed]
+  #   branches:   
+  #     - 'release**'
 
 jobs:
   build-image:
