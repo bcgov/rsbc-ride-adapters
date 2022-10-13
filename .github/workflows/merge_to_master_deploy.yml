@@ -8,6 +8,7 @@ on:
 
 jobs:
   build-image:
+    name: Build and Push the Image
     runs-on: ubuntu-latest
     env:
       build_config_name: "ride-vips-adapter-nginx-proxy-build-v2"
@@ -15,29 +16,46 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Authenticate and set context
-        uses: redhat-actions/oc-login@v1
+        uses: redhat-actions/oc-login@v1.1.2
         with:
           openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL_SILVER }}
           openshift_token: ${{ secrets.OPENSHIFT_SA_PIPELINE_TOKEN_SILVER }}
           namespace: "${{ secrets.OPENSHIFT_LICENSE_PLATE_SILVER }}-tools"
       - name: Apply Build Yaml
         run: |
-          echo 'apply build yaml'
+          cd rsbc_df_vips_adapter_gateway/github_actions_yamls
+          oc process -f revproxy_build_template.yml --param-file revproxy_build_params.yml --param OUTPUT_IMAGE_STREAM_TAG=prod-build-$GITHUB_SHA | oc apply -f -
       - name: Start the build and push
         run: |
-          echo 'Build and Push'
-      - name: Manual approval for deploy to PROD
+          oc start-build ${{ env.build_config_name }} --follow --wait
+
+  deploy-prod:
+    name: Deploy to PROD
+    runs-on: ubuntu-latest
+    environment: prod
+    needs: build-image
+    env:
+      build_config_name: "ride-vips-adapter-nginx-proxy-build-v2"
+      base_image_tag: "1"
+      IMAGE_STREAM_TAG: prod-build-${{ github.sha}}
+    steps:
+      - name: Checkout Gitops repository
+        uses: actions/checkout@v3
+        with:
+          repository: bcgov-c/tenant-gitops-be5301
+          ref: deployment/rsbc-ride-vips-adapter
+          token: ${{ secrets.GITOPS_GITHUB_TOKEN }}
+      - name: Update Image tag for prod deploy
+        uses: mikefarah/yq@v4.28.1
+        with:
+          cmd: yq eval -i '.images[0].newTag = "${{env.IMAGE_STREAM_TAG}}"' 'ride_vips_adapter/overlays/prod/kustomization.yaml'
+      - name: Check Changed value
         run: |
-          echo 'manual approval for prod'
-      - name: Update deploy manifests for prod to Argocd
+          cat ride_vips_adapter/overlays/prod/kustomization.yaml
+      - name: Push Changes to Gitops repo
         run: |
-          echo 'update deploy prod'
-      # - name: Apply Build Yaml
-      #   run: |
-      #     cd rsbc_df_vips_adapter_gateway/github_actions_yamls
-      #     oc process -f revproxy_build_template.yml --param-file revproxy_build_params.yml --param OUTPUT_IMAGE_STREAM_TAG=build-$GITHUB_SHA | oc apply -f -
-      # - name: Start the build and push
-      #   run: |
-      #     oc start-build ${{ env.build_config_name }} --follow --wait
+          git add .
+          git commit -m "updated prod image details to yaml"
+          git push
