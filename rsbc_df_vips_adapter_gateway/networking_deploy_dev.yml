@@ -27,6 +27,17 @@ spec:
         app: ride-vips-adapter-rev-proxy
     spec:
       containers:
+      - name: nginx-exporter
+        image: image-registry.apps.silver.devops.gov.bc.ca/be5301-dev/nginx-prometheus-exporter:1.0
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - name: nginx-ex-port
+          containerPort: 9113
+        args:
+          - -nginx.scrape-uri=http://localhost:8087/metrics
       - image: image-registry.openshift-image-registry.svc:5000/be5301-dev/busybox:latest-stable
         name: accesslogs
         volumeMounts:
@@ -97,6 +108,7 @@ spec:
         - containerPort: 8080
         - containerPort: 8082
         - containerPort: 5000
+        - containerPort: 81
         livenessProbe:
           httpGet:
             path: /
@@ -153,6 +165,46 @@ spec:
 
 ---
 
+kind: Service
+apiVersion: v1
+metadata:
+  name: ride-vips-nginx-proxy-cluster-ip-2
+  namespace: be5301-dev
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8087
+      name: tcp1
+  internalTrafficPolicy: Cluster
+  type: ClusterIP
+  ipFamilyPolicy: SingleStack
+  sessionAffinity: None
+  selector:
+    app: ride-vips-adapter-rev-proxy
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: ride-vips-nginx-proxy-nginx-exporter-cluster-svc
+  namespace: be5301-dev
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9113
+      name: tcp1
+  internalTrafficPolicy: Cluster
+  type: ClusterIP
+  ipFamilyPolicy: SingleStack
+  sessionAffinity: None
+  selector:
+    app: ride-vips-adapter-rev-proxy
+
+---
+
 kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
@@ -165,6 +217,42 @@ spec:
     weight: 100
   port:
     targetPort: 8083
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: ride-vips-gateway-adapter-nginx-exporter
+  namespace: be5301-dev
+spec:
+  to:
+    kind: Service
+    name: ride-vips-nginx-proxy-nginx-exporter-cluster-svc
+    weight: 100
+  port:
+    targetPort: 9113
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Allow
+  wildcardPolicy: None
+
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: ride-vips-gateway-adapter-metrics
+  namespace: be5301-dev
+spec:
+  to:
+    kind: Service
+    name: ride-vips-nginx-proxy-cluster-ip-2
+    weight: 100
+  port:
+    targetPort: 8087
   tls:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
